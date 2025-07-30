@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasHeart;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Question extends Model
 {
     /** @use HasFactory<\Database\Factories\QuestionFactory> */
-    use HasFactory;
+    use HasFactory, HasHeart;
 
     public function category()
     {
@@ -28,25 +29,5 @@ class Question extends Model
     public function comments()
     {
         return $this->morphMany(Comment::class, 'commentable');
-    }
-
-    public function hearts()
-    {
-        return $this->morphMany(Heart::class, 'heartable');
-    }
-
-    public function isHearted()
-    {
-        return $this->hearts()->where('user_id', 20)->exists();
-    }
-
-    public function heart()
-    {
-        $this->hearts()->create(['user_id' => 20]);
-    }
-
-    public function unHeart()
-    {
-        $this->hearts()->where('user_id', 20)->delete();
     }
 }
