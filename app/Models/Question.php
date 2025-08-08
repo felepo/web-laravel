@@ -11,6 +11,13 @@ class Question extends Model
     /** @use HasFactory<\Database\Factories\QuestionFactory> */
     use HasFactory, HasHeart;
 
+    protected $fillable = [
+        'title',
+        'user_id',
+        'category_id',
+        'description',
+    ];
+
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -47,7 +54,6 @@ class Question extends Model
                     $comment->hearts()->delete();
                     $comment->delete();
                 });
-                // $answer->delete();
             });
         });
     }
