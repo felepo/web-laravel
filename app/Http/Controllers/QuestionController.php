@@ -6,6 +6,7 @@ use App\Http\Requests\StoreQuestionRequest;
 use App\Http\Requests\UpdateQuestionRequest;
 use App\Models\Question;
 use App\Models\Category;
+use App\Support\QuestionShowLoader;
 
 class QuestionController extends Controller
 {
@@ -23,27 +24,9 @@ class QuestionController extends Controller
         ]);
     }
 
-    public function show(Question $question)
+    public function show(Question $question, QuestionShowLoader $loader)
     {
-        $userId = auth()->id();
-
-        $question->load([
-            'user',
-            'category',
-            'answers' => fn ($query) => $query->with([
-                'user',
-                'hearts' => fn ($query) => $query->where('user_id', $userId),
-                'comments' => fn ($query) => $query->with([
-                    'user',
-                    'hearts' => fn ($query) => $query->where('user_id', $userId),
-                ]),
-            ]),
-            'comments' => fn ($query) => $query->with([
-                'user',
-                'hearts' => fn ($query) => $query->where('user_id', $userId),
-            ]),
-            'hearts' => fn ($query) => $query->where('user_id', $userId),
-        ]);
+        $loader->load($question);
 
         return view('questions.show', [
             "question" => $question,
